@@ -11,6 +11,7 @@ The Circuit Equivalence Checker is a powerful Python tool designed to verify the
 - Provides detailed counterexamples for non-equivalent circuits
 - Robust error handling for invalid circuit descriptions
 - Comprehensive unit tests to ensure reliability
+- Circuit validation functionality
 
 ## Installation
 
@@ -27,7 +28,7 @@ The Circuit Equivalence Checker is a powerful Python tool designed to verify the
 
 ## Usage
 
-### As a Module
+### Circuit Equivalence Checker
 
 You can use the `check_circuit_equivalence` function in your Python scripts:
 
@@ -65,12 +66,39 @@ else:
         print("Differing outputs:", diffs)
 ```
 
-### As a Standalone Script
+### Circuit Validator
 
-Run the script directly to see a demonstration:
+You can use the `validate_circuit` function to validate a circuit with given input assignments:
+
+```python
+from circuit_validator import validate_circuit
+
+circuit = {
+    'inputs': ['A', 'B', 'C'],
+    'gates': [
+        {'name': 'D', 'type': 'AND', 'inputs': ['A', 'B']},
+        {'name': 'E', 'type': 'OR', 'inputs': ['D', 'C']}
+    ],
+    'outputs': ['E']
+}
+
+input_assignments = {'A': True, 'B': True, 'C': False}
+is_valid, result = validate_circuit(circuit, input_assignments)
+
+if is_valid:
+    print("The input assignments are valid.")
+    print(f"Outputs: {result}")
+else:
+    print(f"Validation failed: {result}")
+```
+
+### As Standalone Scripts
+
+Run the scripts directly to see demonstrations:
 
 ```
 python circuit_equivalence.py
+python circuit_validator.py
 ```
 
 ## Testing
@@ -78,15 +106,16 @@ python circuit_equivalence.py
 To run the unit tests:
 
 ```
-python test.py
+python test_evaluator.py
 ```
 
 ## How It Works
 
 1. The tool converts circuit descriptions into Z3 expressions.
-2. It then uses Z3 to check if there exists any input combination that produces different outputs for the two circuits.
-3. If such a combination exists, the circuits are not equivalent, and a counterexample is provided.
-4. If no such combination exists, the circuits are deemed equivalent.
+2. For equivalence checking, it uses Z3 to check if there exists any input combination that produces different outputs for the two circuits.
+3. For circuit validation, it applies the given input assignments and checks for consistency and computes outputs.
+4. If a difference or contradiction is found, a counterexample or error message is provided.
+5. If no such combination exists, the circuits are deemed equivalent or the validation is successful.
 
 ## Circuit Description Format
 
